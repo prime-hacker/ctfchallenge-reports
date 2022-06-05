@@ -12,5 +12,7 @@
 6. Content discovery on [www.vulnrecruitment.co.uk](http://www.vulnrecruitment.co.uk/)
 	- Only found `/staff` ![Screenshot 5](Screenshot_5.png)
 7. While discovering this `staff/1`, `staff/2`, etc.. I tried `staff/3` and this showed ![Screenshot 6](Screenshot_6.png) So there must be something to do with this member
-8. Going back to `admin.vulnrecruitment.co.uk`, I tried to `ping -c 4 www.vulnrecruitment.co.uk` and it turned out that the 2 subdomains are hosted on the same server ![Screenshot 8](Screenshot_8.png) **This may be a [HTTP Host Header Attack](https://portswigger.net/web-security/host-header)??**
-9. Going back to the `nmap` of the server, the *TCP* mapping showed the version of the running web server ![Screenshot 7](Screenshot_7.png) So this may have a disclosed vulnerability?
+8. Going back to `admin.vulnrecruitment.co.uk`, I tried to `ping -c 4 www.vulnrecruitment.co.uk` and it turned out that the 2 subdomains are hosted on the same server ![Screenshot 8](Screenshot_8.png) **This may be a [HTTP Host Header Attack](https://portswigger.net/web-security/host-header)??** *No*
+9. Going back to the `nmap` of the server, the *TCP* mapping showed the version of the running web server ![Screenshot 7](Screenshot_7.png) So this may have a disclosed vulnerability? **It seems not**
+10. Tried finding a SQL injection vulnerability in the `/staff/{staff_id}/image?id={id}` and found this response ![Screenshot 9](Screenshot_9.png)
+	11. Visited [b38f1-uploads.vulnrecruitment.co.uk](http://b38f1-uploads.vulnrecruitment.co.uk/) and found that it is file storage engine of the domain ![Screenshot 10](Screenshot_10.png) *Found Flag 1*
