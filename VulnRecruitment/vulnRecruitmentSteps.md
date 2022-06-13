@@ -22,3 +22,12 @@
 	3. So I read a [report](https://keybase.pub/bertjwregeer/2019-12-10%20-%20error_page%20request%20smuggling.pdf) from [Bert JW Regeer](https://keybase.pub/bertjwregeer/) and tried to do request smuggling but only the `403 Forbidden` error appeared
 			![Screenshot 13](Screenshot_13.png)
 12. When checking for the link `/staff/3/image?id={image_id}` I removed then it said that the id must be there, then when inserting it again it showed `Staff Member is no longer active`, so we maybe using this in some way? Image id validation happens before checking the user id
+13. Going back to the `/staff` endpoint, we do a deeper level of content fuzzing and see what happens ![Fuzzing /staff/](Screenshot_14_1.png) ![Results](Screenshot_14_2.png) So we find this `/portal` under `/staff` and we go examine it
+14. This `/staff/portal` redirects me to `/staff/portal/login` which is a login forum with a username and password input fields ![Login Portal](Screenshot_15.png)
+	1. First, we do use the emails we found under `/staff/1`, `/staff/2` and `/staff/4` to do some password bruteforcing
+	2. Tried with the first user `jacob.webster@vulnrecruitment.co.uk` but got `User not does have online access` *(Yes with this faulty grammar)* ![No Online Access](Screenshot_16.png)
+	3. Found that only user `archie.bentley%40vulnrecruitment.co.uk` receives error `Invalid email / password combination` so we are going to bruteforce his password using `ffuf` ![Password Bruteforcing](Screenshot_17.png)
+	4. Logged in as `archie.bentley@vulnrecruitment.co.uk:thunder` and a code was sent to my mobile that consists of 4 digits! ![Mobile Code](Screenshot_18.png)
+	5. When we try for more than 3 times we get this error message ![Wrong Attempts](Screenshot_19.png) but when we look at the burp request we find an `attempt` parameter that when we fix it to `attempt=1` we can try as much `otp`s as we can
+	6. Now we bruteforce the OTP code, found a working otp the redirected me to `/staff/portal` with a `token` cookie ![Found OTP](Screenshot_20.png)
+	7. It got authenticated and we see this ![Authenticated!](Screenshot_21.png) *(Found Flag 2)*
