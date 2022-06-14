@@ -28,5 +28,12 @@
 	3. Found that only user `archie.bentley%40vulnrecruitment.co.uk` receives error `Invalid email / password combination` so we are going to bruteforce his password using `ffuf`\ ![Password Bruteforcing](Screenshot_17.png)
 	4. Logged in as `archie.bentley@vulnrecruitment.co.uk:thunder` and a code was sent to my mobile that consists of 4 digits!\ ![Mobile Code](Screenshot_18.png)
 	5. When we try for more than 3 times we get this error message\ ![Wrong Attempts](Screenshot_19.png) but when we look at the burp request we find an `attempt` parameter that when we fix it to `attempt=1` we can try as much `otp`s as we can
-	6. Now we bruteforce the OTP code, found a working otp the redirected me to `/staff/portal` with a `token` cookie\ ![Found OTP](Screenshot_20.png)
+	6. Now we bruteforce the OTP code, found a working otp `3798` the redirected me to `/staff/portal` with a `token` cookie\ ![Found OTP](Screenshot_20.png)
 	7. It got authenticated and we see this\ ![Authenticated!](Screenshot_21.png) *(Found Flag 2)*
+15. After logging in, we find this message that was sent from `archie` to `amelia` saying `All the best on your last day at work, you will be missed from the team`! So this means that this is `/staff/3`. So I tried to login with her email and found error `Invalid email / password combination` \ ![Left User Account Still there](Screenshot_22.png) \ Thus, her account may still be there!
+	1. Tried brute bruteforcing its password and Voila! We have valid credentials `amelia.nixon@vulnrecruitment.co.uk:zxcvbn` \ ![Valid Credentials](Screenshot_23.png)
+	2. Logged in with these credentials but another authentication method appeared! \ ![Local Pub](Screenshot_24.png)
+	3. Thought of bruteforcing this but I have no list to bruteforce with!
+16. Going back to user `archie.bentley@vulnrecruitment.co.uk`, I tried to access `/staff/portal/uploads` but it is only an admin content. So I tried to bruteforce the endpoint but only `404` responses showed for some endpoints \ ![404](Screenshot_26.png) \ But I didn't know what to do with any of it
+17. I went to `http://b38f1-uploads.vulnrecruitment.co.uk/uploads/` and tried to fuzz for any deeper endpoints under `/uploads` *(because maybe I am missing something)* but found nothing
+18. Also, tried to search for any endpoints under `http://admin.vulnrecruitment.co.uk/` because I noticed when I gave it a random endpoint it gives back a `404` status code, so maybe if we bruteforced we get something other than this `404`? but nothing showed other than `/css` and `/js` endpoints with `301` status \ ![Just CSS and JS](Screenshot_27.png)
