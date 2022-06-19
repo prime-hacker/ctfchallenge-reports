@@ -49,4 +49,6 @@
 	9. We search by these coordinates and we find that it is located *Burnhan-on-Crouch CM0 8HR, United Kingdom*! \ ![Amelia Nixon's Location](Screenshot_34.png)
 	10. Searched for local pubs near this place and found some pubs like **The Queens Head**, **Bar 3** and **The New Welcome Sailor**![Local Pubs Near Amelia's Place](Screenshot_35.png)
 	11. Tried **The New Welcome Sailor** and it has successfully logged us in! \ ![The True Local Pub](Screenshot_36.png) \ *Found Flag 3*
-20. 
+20. After clicking on this `Uploads` tab and monitoring the request, I found that it has a `POST` parameter called `listing_file` and when changing the value of this parameter to, e.g., `admin.php`, it has an HTML response as if the backend system has made a request `http://someurl/admin.php`. So I think it is an [SSRF](https://portswigger.net/web-security/ssrf) \ ![Possible SSRF](Screenshot_37.png)
+21. Removed `admin.php` and found the response of `http://b38f1-uploads.vulnrecruitment.co.uk/` so this is the website that it requests but remember, from *Step 11*, we found an open redirection vulnerability which redirects us to `https://google.com`. So I tried this: `listing_file=redirect?url=https://example.com` and Voila! We have [Example.com](https://example.com) in our response. This is means that the backend has followed the redirection header! \ ![SSRF In Action](Screenshot_38.png)
+22. Thus, we tried to request `http://admin.vulnrecruitment.co.uk` and yes, we found the last flag \ ![Accessing admin](Screenshot_39.png) \ *Found Flag 4*
