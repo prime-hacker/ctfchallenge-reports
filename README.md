@@ -13,3 +13,7 @@ Report link: [VulnForum](VulnForum/vulnForumSteps.md)
 # VulnRecruitment Challenge
 A recruitment website that shows its staff and exposes some stuff.\
 Report link: [VulnRecruitment](VulnRecruitment/vulnRecruitmentSteps.md)
+
+# VulnTraining Challenge
+VulnTraining provide training services to their clients but they could do with some training themselves, security training that is!\
+Report link: [VulnTraining](VulnTraining/vulnTrainingWalkthrough)
