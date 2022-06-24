@@ -16,4 +16,4 @@ Report link: [VulnRecruitment](VulnRecruitment/vulnRecruitmentSteps.md)
 
 # VulnTraining Challenge
 VulnTraining provide training services to their clients but they could do with some training themselves, security training that is!\
-Report link: [VulnTraining](VulnTraining/vulnTrainingWalkthrough)
+Report link: [VulnTraining](VulnTraining/vulnTrainingWalkthrough.md)
