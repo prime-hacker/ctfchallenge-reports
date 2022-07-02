@@ -52,3 +52,5 @@ Here, we add anything we find of value incrementally during our walk through.
 		2. Voila! We found the password which is `987654321`   ![dominic's Password](screenshots/ss17.png)
 8. While reviewing the requests in Burp Proxy history *(a step I do often every now and then during the pentesting process)*, I found that the main website `www.vulntraining.co.uk` has a flag in its response in the HTML `<meta>` tag!   ![Flag in meta tag](screenshots/ss16.png)  **Found Flag 5**
 9. We now login in the `billing.vulntraining.co.uk/login` forum with the credentials `dominic.bryant:987654321`   ![Billing Subdomain Home](screenshots/ss18.png)   **Found Flag 8**
+	1. We find that every Id is a hyperlink to an invoice, so I tried different Ids like `billing.vulntraining.co.uk/10` but it showd a `404 status code`
+	2. So maybe we can do content discovery using **ffuf** but found nothing other than the Ids of the 4 invoices and the `/login` and `/logout` endpoints
