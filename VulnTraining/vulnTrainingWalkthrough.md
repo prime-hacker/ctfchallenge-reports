@@ -1,4 +1,4 @@
-# Intro
+k Intro
 On the website [ctfchallenge.com](https://ctfchallenge.com), the definition of this challenge is as follows
 >VulnTraining provide training services to their clients but they could do with some training themselves, security training that is!
 
@@ -55,3 +55,7 @@ Here, we add anything we find of value incrementally during our walk through.
 	1. We find that every Id is a hyperlink to an invoice, so I tried different Ids like `billing.vulntraining.co.uk/10` but it showd a `404 status code`
 	2. So maybe we can do content discovery using **ffuf** but found nothing other than the Ids of the 4 invoices and the `/login` and `/logout` endpoints but only sat the `token` cookie with `deleted`
 	3. Tried content discovery on `billing.vulntraining.co.uk/1/FUZZ` but nothing appeared   ![NO Content](screenshots/ss19.png)
+10. I went back to surfing the original domain and found that it has `style.css` file under `http://www.vulntraining.co.uk/css` so I went to look for the content of this file and found a hidden asset!   ![Hidden Domain in CSS File](screenshots/ss20.png)
+	1. I visited this domain and found it to be an AWS Bucket that hosts the background image and a `flag.txt` file!   ![AWS Bucket](screenshots/ss21.png)
+	2. Visited this file and found the flag    ![flag.txt in AWS Bucket](screenshots/ss22.png)   **Found Flag 3**
+11. 
