@@ -1,4 +1,4 @@
-k Intro
+# Intro
 On the website [ctfchallenge.com](https://ctfchallenge.com), the definition of this challenge is as follows
 >VulnTraining provide training services to their clients but they could do with some training themselves, security training that is!
 
@@ -13,14 +13,20 @@ Here, we add anything we find of value incrementally during our walk through.
 2. c867fc3a.vulntraining.co.uk *found from subdomain discovery in step 2*
 ## Endpoints
 1. billing.vulntraining.co.uk/login -> *found from subdomain discovery in step 2*
-2. www.vulntraining.co.uk/.git/HEAD -> *found from content discovery in step 5*
-3. www.vulntraining.co.uk/.git/config -> *found from content discovery in step 5*
-4. www.vulntraining.co.uk/.git/index -> *found from content discovery in step 5*
-5. www.vulntraining.co.uk/framework -> *found from content discovery in step 5*
-6. www.vulntraining.co.uk/robots.txt -> *found from content discovery in step 5*
-7. www.vulntraining.co.uk/server/ -> *found from content discovery in step 5*
-8. www.vulntraining.co.uk/server/login -> *was directed to it through a location header*
-9. vulntraining.co.uk/php-my-s3cret-admin -> *found from endpoint 7*
+	1. billing.vulntraining.co.uk/?api=test -> *found from parameter discovery in step 14*
+2. www.vulntraining.co.uk/
+	1. www.vulntraining.co.uk/git/HEAD -> *found from content discovery in step 5*
+	2. www.vulntraining.co.uk/.git/config -> *found from content discovery in step 5*
+	3. www.vulntraining.co.uk/.git/index -> *found from content discovery in step 5*
+	4. www.vulntraining.co.uk/framework -> *found from content discovery in step 5*
+	5. www.vulntraining.co.uk/robots.txt -> *found from content discovery in step 5*
+	6. www.vulntraining.co.uk/server/ -> *found from content discovery in step 5*
+	7. www.vulntraining.co.uk/server/login -> *was directed to it through a location header*
+3. vulntraining.co.uk/php-my-s3cret-admin -> *found from endpoint 7*
+4. admin.vulntraining.co.uk/
+	1. admin.vulntraining.co.uk/admin
+		1. admin.vulntraining.co.uk/admin/users
+	2. admin.vulntraining.co.uk/invoices
 ## Credentials
 1. Database creds: `vulntraining:#x7QE1Jg&cNO`
 2. Billing account creds: `dominic.bryant:987654321`
@@ -36,7 +42,7 @@ Here, we add anything we find of value incrementally during our walk through.
 	1. `c867fc3a.vulntraining.co.uk` showed a flag   ![Flag 1](screenshots/ss3.png)       **Found Flag 1**
 	3. `billing.vulntraining.co.uk` showed a login forum   ![Login Forum](screenshots/ss4.png)
 4. We can start by entering any data in username and password fields to see how the website reacts with it and it showed the error message `Username is invalid`   ![Invalid Username](screenshots/ss5.png)   So we can enumerate usernames
-	1. Username enumeration using **ffuf**: `ffuf -w ~/wordlists/usernames.txt   -X POST -d "username=FUZZ&password=werwe" -t 1 -p 0.1 -H "Cookie: ctfchallenge=$ctfchallenge_cookie" -H "Content-Type: application/x-www-form-urlencoded" -u http://billing.vulntraining.co.uk/login -mc all -fr "Username is invalid"` but **no username in this list is valid** so we have to find usernames in another way
+	1. Username enumeration using **ffuf**: `ffuf -w ~/wordlists/usernames.txt -X POST -d "username=FUZZ&password=werwe" -t 1 -p 0.1 -H "Cookie: ctfchallenge=$ctfchallenge_cookie" -H "Content-Type: application/x-www-form-urlencoded" -u http://billing.vulntraining.co.uk/login -mc all -fr "Username is invalid"` but **no username in this list is valid** so we have to find usernames in another way
 5. We try discovering any hidden endpoint in `www.vulntraining.co.uk` by bruteforcing it with *ffuf*: `ffuf -w ~/wordlists/content.txt -t 1 -p 0.1  -H "Cookie: ctfchallenge=$ctfchallenge_cookie" -u http://www.vulntraining.co.uk/FUZZ -mc all -fc 404` and found `.git` files and some endpoints   ![.git Files](screenshots/ss6.png)
 	1. We start with the simplest `robots.txt` endpoint and we find that it has a disallowed directory that when accessed showed **flag 2**   ![/robots.txt](screenshots/ss7.png)   ![Flag 2](screenshots/ss8.png)   **Found Flag 2**
 	2. Then we try accessing this `/server` endpoint that shows `302 status code` which is a relocation, but is showed a snapshot of the server status!   ![Server Status](screenshots/ss9.png)   **Found Flag 4**
@@ -52,10 +58,16 @@ Here, we add anything we find of value incrementally during our walk through.
 		2. Voila! We found the password which is `987654321`   ![dominic's Password](screenshots/ss17.png)
 8. While reviewing the requests in Burp Proxy history *(a step I do often every now and then during the pentesting process)*, I found that the main website `www.vulntraining.co.uk` has a flag in its response in the HTML `<meta>` tag!   ![Flag in meta tag](screenshots/ss16.png)  **Found Flag 5**
 9. We now login in the `billing.vulntraining.co.uk/login` forum with the credentials `dominic.bryant:987654321`   ![Billing Subdomain Home](screenshots/ss18.png)   **Found Flag 8**
-	1. We find that every Id is a hyperlink to an invoice, so I tried different Ids like `billing.vulntraining.co.uk/10` but it showd a `404 status code`
+	1. We find that every Id is a hyperlink to an invoice, so I tried different Ids like `billing.vulntraining.co.uk/10` but it showed a `404 status code`
 	2. So maybe we can do content discovery using **ffuf** but found nothing other than the Ids of the 4 invoices and the `/login` and `/logout` endpoints but only sat the `token` cookie with `deleted`
 	3. Tried content discovery on `billing.vulntraining.co.uk/1/FUZZ` but nothing appeared   ![NO Content](screenshots/ss19.png)
 10. I went back to surfing the original domain and found that it has `style.css` file under `http://www.vulntraining.co.uk/css` so I went to look for the content of this file and found a hidden asset!   ![Hidden Domain in CSS File](screenshots/ss20.png)
 	1. I visited this domain and found it to be an AWS Bucket that hosts the background image and a `flag.txt` file!   ![AWS Bucket](screenshots/ss21.png)
 	2. Visited this file and found the flag    ![flag.txt in AWS Bucket](screenshots/ss22.png)   **Found Flag 3**
-11. 
+11. We try doing content discovery on `http://www.vulntraining.co.uk/server/` using **ffuf** but only the `/login` endpoint appeared!
+12. I went back for doing some subdomain discovery on `vulntraining.co.uk` because maybe I have missed something and as I hoped, we found `admin.vulntraining.co.uk` subdomain   ![admin subdomain](screenshots/ss23.png)
+13. We try with this `admin.vulntraining.co.uk` subdomain and it is an API that shows a response `Unauthorized`! So we can do content discovery
+	1. Doing content discovery, we found 2 endpoints: `/admin` and `/invoices`   ![admin.vulntraining.co.uk endpoints](screenshots/ss24.png)
+	2. I recursively did content discovery on `/admin` and found `/admin/users/` under it but it was also `unauthorized`, so maybe we're going in the wrong way
+14. We go back to `billing.vulntraining.co.uk`, it shows a comment in HTML saying `API Response Time 0`, so we know for sure that this is an api. But from *step 9.1* we know that it has no endpoints other than that of `/1`, `/2`, `/3`, `/4`, so can we do parameter discovery?    ![Parameter Bruteforce](screenshots/ss25.png)    and found a parameter showing `500 status code` which indicates an internal server error. This seems interesting    ![API Parameter](screenshots/ss26.png)
+	1. We see what kind of error it shows, so I tried setting this `api` get parameter to  `test` and it only showed `API Error` message!    ![API Error](screenshots/ss27.png)
