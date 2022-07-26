@@ -23,7 +23,7 @@ Here, we add anything we find of value incrementally during our walk through.
 	6. www.vulntraining.co.uk/server/ -> *found from content discovery in step 5*
 	7. www.vulntraining.co.uk/server/login -> *was directed to it through a location header*
 3. vulntraining.co.uk/php-my-s3cret-admin -> *found from endpoint 7*
-4. admin.vulntraining.co.uk/
+4. admin.vulntraining.co.uk/ -> *found after subdomain discovery in step 12*
 	1. admin.vulntraining.co.uk/admin
 		1. admin.vulntraining.co.uk/admin/users
 	2. admin.vulntraining.co.uk/invoices
@@ -69,5 +69,11 @@ Here, we add anything we find of value incrementally during our walk through.
 13. We try with this `admin.vulntraining.co.uk` subdomain and it is an API that shows a response `Unauthorized`! So we can do content discovery
 	1. Doing content discovery, we found 2 endpoints: `/admin` and `/invoices`   ![admin.vulntraining.co.uk endpoints](screenshots/ss24.png)
 	2. I recursively did content discovery on `/admin` and found `/admin/users/` under it but it was also `unauthorized`, so maybe we're going in the wrong way
-14. We go back to `billing.vulntraining.co.uk`, it shows a comment in HTML saying `API Response Time 0`, so we know for sure that this is an api. But from *step 9.1* we know that it has no endpoints other than that of `/1`, `/2`, `/3`, `/4`, so can we do parameter discovery?    ![Parameter Bruteforce](screenshots/ss25.png)    and found a parameter showing `500 status code` which indicates an internal server error. This seems interesting    ![API Parameter](screenshots/ss26.png)
+14. We go back to `billing.vulntraining.co.uk`, it shows a comment in HTML saying `API Response Time 0`, so we know for sure that this is an *api*. But from *step 9.1* we know that it has no endpoints other than that of `/1`, `/2`, `/3`, `/4`, so can we do parameter discovery?    ![Parameter Bruteforce](screenshots/ss25.png)    and found a parameter showing `500 status code` which indicates an internal server error. This seems interesting    ![API Parameter](screenshots/ss26.png)
 	1. We see what kind of error it shows, so I tried setting this `api` get parameter to  `test` and it only showed `API Error` message!    ![API Error](screenshots/ss27.png)
+	2. Tried multiple values for this `api` parameter like `api=internal`, `api=external` and such but nothing worked
+	3. Tried parameter bruteforcing on `http://admin.vulntraining.co.uk/admin/?FUZZ=test` but nothing happened
+	4. Tried content discovery on `http://admin.vulntraining.co.uk/admin/users/FUZZ` and it showed that any integer that follows `/users/` such as `/users/10001` would give a `401 Status Code` response
+	5. Tried writing a URL in that *api* parameter and it shows the original pages of `billing.vulntraining.co.uk` when `api=admin.vulntraining.co.uk` and shows `API Error` when `api=billing.vulntraining.co.uk`   ![api parameter set to URL](screenshots/ss28.png)
+	6. This indicates that `billing.vulntraining.co.uk` communicates with `admin.vulntraining.co.uk`, so maybe we can see how this communication works by generating a burp collaborator link and see if its response shows. YAAAAYYY! we find a flag and a token (probably the admin token)    ![Collaborator Request](screenshots/ss29.png)    **Found Flag 9**
+15. 
