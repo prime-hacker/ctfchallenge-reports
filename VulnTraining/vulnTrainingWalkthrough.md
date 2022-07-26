@@ -80,4 +80,9 @@ Here, we add anything we find of value incrementally during our walk through.
 	1. From *step 13.1*, we know that `admin.vulntraining.co.uk` has `/admin/users/` endpoint so we must try it. Unfortunately, it shows that user does not have the permission   ![User Has No Permissions](screenshots/ss31.png)
 	2. We can try `/admin/users/1` for example hoping that this *api* has [Broken Function Level Authorization](https://github.com/OWASP/API-Security/blob/master/2019/en/src/0xa5-broken-function-level-authorization.md) vulnerability, and it actually has!   ![Broken Authorization](screenshots/ss32.png)
 	3. We then do bruteforcing on this `/admin/users/{id}` endpoint to enumerate user ids using Burp Intruder and we found the **admin** user to have `id=5` and `username=jon.helmstead`!    ![Admin Found](screenshots/ss33.png)   **Found Flag 10**
-	4. We then bruteforce this `jon.helmstead` username in the ``
+	4. We try accessing this `/admin` endpoint with the new `apikey` we found and see what appears. We find a secret endpoint    ![Secret Endpoint](screenshots/ss34.png)
+	5. We access this secret endpoint but it only redirected my to another endpoint with no value   ![Secret Message](screenshots/ss35.png)
+	6. Tried changing this `id` parameter but it only showed `Message is deleted` when `id=1` and `Message not found` when I changed the `id` to any other value
+16. Tried to login with `jon.helmstead` to `http://billing.vulntraining.co.uk/login` but it says that `Username is invalid` so this user is not on `billing` sudomain
+17. Then I bruteforce the password of `jon.helmstead` username in the `http://www.vulntrainging.co.uk/server/login`, but found no password matching
+18. 
