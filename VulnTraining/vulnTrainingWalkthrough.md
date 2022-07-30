@@ -83,6 +83,7 @@ Here, we add anything we find of value incrementally during our walk through.
 	4. We try accessing this `/admin` endpoint with the new `apikey` we found and see what appears. We find a secret endpoint    ![Secret Endpoint](screenshots/ss34.png)
 	5. We access this secret endpoint but it only redirected my to another endpoint with no value   ![Secret Message](screenshots/ss35.png)
 	6. Tried changing this `id` parameter but it only showed `Message is deleted` when `id=1` and `Message not found` when I changed the `id` to any other value
-16. Tried to login with `jon.helmstead` to `http://billing.vulntraining.co.uk/login` but it says that `Username is invalid` so this user is not on `billing` sudomain
-17. Then I bruteforce the password of `jon.helmstead` username in the `http://www.vulntrainging.co.uk/server/login`, but found no password matching
-18. 
+16. Tried to login with `jon.helmstead` to `http://billing.vulntraining.co.uk/login` but it says that `Username is invalid` so this user is not on `billing` subdomain
+17. Then I bruteforce the password of `jon.helmstead` username *(with the large passwords file)* in the `http://www.vulntrainging.co.uk/server/login`, but found no password matching
+18. I tried SQLi with this `id` parameter thinking that this message with `id=1` might have a flag `deleted=1`, so I wrote in the query `/admin/s3cr3t_m3ss4g3s/?id=1%20AND%20deleted%3d1` and it showed the same response as `/admin/s3cr3t_m3ss4g3s/?id=1` so I think it is vulnerable to SQL injection
+	1. 
