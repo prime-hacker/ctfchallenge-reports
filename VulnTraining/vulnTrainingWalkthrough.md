@@ -87,4 +87,6 @@ Here, we add anything we find of value incrementally during our walk through.
 17. Then I bruteforce the password of `jon.helmstead` username *(with the large passwords file)* in the `http://www.vulntrainging.co.uk/server/login`, but found no password matching
 18. I tried SQLi with this `id` parameter thinking that this message with `id=1` might have a flag `deleted=1`, so I wrote in the query `/admin/s3cr3t_m3ss4g3s/?id=1%20AND%20deleted%3d1` and it showed the same response as `/admin/s3cr3t_m3ss4g3s/?id=1` so I think it is vulnerable to SQL injection   ![Possible SQLi](screenshots/ss36.png)
 	1. This may be because in the backend code, it checks whether the retrieved message from the database has the deleted column with 1, then it will show to the user `Message is deleted` message
-	2. This might be a Blind SQLi!
+	2. This is a Blind SQLi! So how can we exploit this? I tried testing the message with `id=2` because I know its content, and then from Wappalyzer I found that the website uses PHP so most probably it will use MySQL as a DBMS
+	3. Tested the `substring` function with MySQL syntax and it worked properly   ![Substring Working on MySQL](screenshots/ss37.png)
+	4. Tried retrieving the id of the second message to test the query inside the `substring` function, but for some reason it did not work. Maybe there's no table called `messages`    ![Select Query](screenshots/ss38.png)
